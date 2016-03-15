@@ -30,14 +30,14 @@ Now that we have R installed, and our packages loaded, we need some data. R can 
 
 As discussed in the workshop presentation, multiple data processing steps were taken to prepare the data for analysis. Some key steps included: BEN - maybe the top 3 things that you did. 
 
-* **Step 6** Run the line below to download the dataset from Ethiopia: 
+* **Step 6** Run the line below to download the dataset: 
 `bb <-  read.csv("https://raw.githubusercontent.com/cloudburst-ltnrm/worldbank-rf/master/datasets/baseball_salaries.csv")`
 
 The dataset will be stored in a data frame (this is one of the data structures in R) named `bb`. A dataframe is basically a matrix, where columns represent variables, and rows are observations. To see the dimensions of this data type `dim(bb)`. We can see the first couple rows of the `bb` dataframe by typing `head(bb)`. To get a more comprehensive view of the data structure, try `str(bb)`. An individual variable can be accessed using the `$` operator, for example `bb$salary`. With this we can get quickly get some basic statistics: `mean(bb$salary)`, `sd(bb$salary)`, or just `summary(bb$salary)`. To get a basic plot from `ggplot2`, try ` qplot(bb$yearID, bb$salary, geom = "jitter")`. To read more about data exploration in R, see the resources section below.
 
 
 ## Random Forests in Practice
-Note that the `caret` package makes each of these steps easy, but is not necessary, and may not always be ideal.
+Note that the `caret` package makes each of the following steps easy, but is not necessary, and may not always be ideal.
 
 ### Feature Building
 A short paragraph about the level of the data, input variables, and outcome. Generally we want covariates to be at the same level as the outcome variable.
@@ -63,15 +63,14 @@ Whatever resources we would like to provide people,
 
 ## About
 ### Authors
-* **Mercedes Stickler** - Title and Position - Web Presence?
-* **Heather Huntington** - Title and Position - Web Presence?
-* **Ben Ewing** - Title and Position - Web Presence?
+* **Heather Huntington** - Impact Evaluation Specialist, Land Tenure and Natural Resources - The Cloudburst Group
+* **Mercedes Stickler** - Sr. Land Tenure Specialist, E3/Land Office, USAID 
+* **Ben Ewing** - Research Analyst - The Cloudburst Group
 
 ### Affiliations
 * **[USAID](https://www.usaid.gov/)**
 * **[The Cloudburst Group](http://www.cloudburstgroup.com)**
 
-### Acknowledgments
 
-## License
-Do we want a license  on this content?
+
+
