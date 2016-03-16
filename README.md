@@ -48,28 +48,47 @@ We will go through the basic process of running random forests. In particular, w
 In random forests and machine learning, predicting variables are often referred to as features. In a perfect world, we would train our model on all variables available. However, we only have limited time for this presentation, and these models can take quite a bit of time to train. **Step 9:** Take a couple minutes to browse the codebook [here](), and pick out 5 or so variables that you think might be could be good predictors of conflict.
 
 ### Testing - Setup
-As mentioned in the presentation, we will need to create a testing set and a training set. `caret` has a function for this called [`createDataPartition`](http://www.inside-r.org/node/87010), which uses the outcome variable to split data. **Step 10:** The following commands will split your data into a training set (80%), and a test set (20%).  
+As mentioned in the presentation, we will need to create a testing set and a training set. `caret` has a function for this called [`createDataPartition`](http://www.inside-r.org/node/87010), which uses the outcome variable to split data. **Step 10:** The following commands will split your data into a training set (60%), and a test set (40%).  
 ```
 trainIndex <- createDataPartition(y = eerf$dispute, p = 0.8, list = F)
 train_data <- eerf[trainIndex,]
 test_data  <- eerf[-trainIndex,]
 ```
-
+Note, we are only using 60% of the data to train due to time constraints. The general recommendation is to use 60-80% for training, and the remainder for testing. In the case where
 ### Building a Model With `caret`
 Once the dataset is split, building a model with random forests in R is a fairly straightforward process. A model can be built as follows. **Step 11:** Train a basic model using the variables you decided on previously.
 ```
-modelFit <- train(dispute ~ your_var_1 + your_var_2 + your_var_3 + your_var_4 + your_var_5, data = train_data, method = "rf")
+mod_rf <- train(parc_2cer_num ~ your_var_1 + your_var_2 + your_var_3 +
+                your_var_4 + your_var_5,
+                data = train_data,
+                trControl = trainControl(method="cv",number=5),
+                method = "rf")
 ```
-Note that if you'd like to use *all* variables in a dataframe, replace the list of variables with a period, e.g. `dispute ~ .`  
+Where the `trControl` argument specifies that we should use cross validation (cv) resampling. To read about available resampling methods, and other training/tuning parameters, [see here](http://topepo.github.io/caret/training.html#custom).
+Note that if you'd like to use *all* variables in a dataframe, replace the list of variables with a period, e.g. `dispute ~ .`, but be prepared to give up your laptop for a while.  
 
-### Testing - Evaluating a Model With `caret`
-Testing the model on the test dataset. Discuss measures of accuracy. Graph stuff.
+### Taking a Look at the Results
+**Step 12:** We can look at an overview of the training process by just typing `mod_rf`. In particular we can see the accuracy and kappa metrics for various `mtry` levels, where `mtry` is the number of predictors sampled at each split. There are also details about the number of samples and predictors, number of outcome variable classes, and resampling method used.  
 
-## Exploration
-Set participants loose. If we want to give this structure, participants can try building a model based on data from one region, and test it on another region. Or we could allow participants to go crazy. Maybe give a task, and see who can get the best prediction.
+**Step 13:** To see details more specific to the final model used, type `mod_rf$finalModel`. We can see many of the same details, as well as the number of trees (which is parameter we can set if desired), the estimated error rate, and a [confusion matrix](http://www.dataschool.io/simple-guide-to-confusion-matrix-terminology/).
 
-## Resources
-Whatever resources we would like to provide people,
+### Making and Evaluating Predictions
+**Step 14:** Now to put the `testing` dataset to use, enter `pred <- predict(mod_rf, testing)`, to make predictions on your dataset. **Step 15:** To generate a confusion matrix and evaluate the predictions, caret provides a great function: `confusionMatrix(pred, testing$parc_2cer_num)`. To plot a bar graph of your results, run the following:
+```
+testing$predRight <- pred==testing$parc_2cer_num
+qplot(parc_2cer_num, fill=predRight, data=testingv,main="",
+      xlab = "Second Level Certification")
+```
+
+### Variable Importance
+The `caret` package also has a built in function for evaluating the importance of individual variables. **Step 16:** Run `varImp(mod_rf)`, to see the importance, and `ggplot(varImp(mod_rf))`, to plot it. If you'd like to read more about *how* variable is determined, the `caret` documentation is great, [see here](http://topepo.github.io/caret/varimp.html).
+
+## Resources and Next Steps
+There are many tuning parameters that can be specified with random forests, and there are several other implementations supported in R, and by `caret`. The resources below are meant to provide you with what you need to take your models to the next step, and gain a deeper understanding of random forests.  
+
+Further resources...
+http://topepo.github.io/caret/training.html#custom
+
 
 ## About
 ### Authors
