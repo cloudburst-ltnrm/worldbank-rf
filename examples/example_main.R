@@ -13,10 +13,10 @@
 rm(list=ls())
 
 # Set Working Directory
-setwd("C:/Users/bewing/Documents/GitHub/worldbank-rf")
+setwd("")
 
 # Import data
-load("datasets/usaid_data.rdata")
+load(url("https://github.com/cloudburst-ltnrm/worldbank-rf/raw/master/datasets/usaid_data.rdata"))
 
 # Libraries
 # Plyr has a number of useful functions
@@ -34,20 +34,19 @@ library(randomForest)
 # R Basics
 
 # See the dimensions
-# dim(eerf)
-# 383 variables for 4332 observations
+dim(eerf)
 
 # see the first couple rows
-# head(eerf)
+head(eerf)
 
 # See variables and their types
-# str(eerf, list.len = ncol(eerf))
+str(eerf, list.len = ncol(eerf))
 # We have to specify how many vars to show using the list.len arg
 
 # We can also get some basic stats, of course
-# mean(eerf$hh_income)
-# sd(eerf$hh_income)
-# summary(eerf$hh_income)
+mean(eerf$hh_income)
+sd(eerf$hh_income)
+summary(eerf$hh_income)
 #==================================================================================================
 
 #==================================================================================================
@@ -57,14 +56,6 @@ set.seed(3456)
 trainIndex <- createDataPartition(y = eerf$parc_2cer, p = 0.8, list = F)
 train_data <- eerf[trainIndex,]
 test_data  <- eerf[-trainIndex,]
-#==================================================================================================
-
-#==================================================================================================
-# for (i in 1:ncol(train_data)) {
-#   print(names(train_data)[i])
-#   if (class(train_data[, names(train_data)[i]])[1] == "factor")
-#     contrasts(train_data[, names(train_data)[i]])
-# }
 #==================================================================================================
 
 #==================================================================================================
