@@ -1,0 +1,101 @@
+#==================================================================================================
+# Ben Ewing - 3/15/2016
+#
+# This script is meant to demonstrate some of the capabilities of the Caret package, and the 
+# random forests method
+#
+#==================================================================================================
+
+#==================================================================================================
+# Setup
+
+# Clear Environments
+rm(list=ls())
+
+# Set Working Directory
+setwd("")
+
+# Import data
+load(url("https://github.com/cloudburst-ltnrm/worldbank-rf/raw/master/datasets/usaid_data.rdata"))
+
+# Libraries
+# Plyr has a number of useful functions
+library(plyr)
+# Caret of course
+library(caret)
+# ggplot2 for plots
+library(ggplot2)
+# randomForest for...random forests
+library(randomForest)
+# rattle for fancyRpartPlot
+library(rattle)
+#==================================================================================================
+
+#==================================================================================================
+# R Basics
+
+# See the dimensions
+dim(eerf)
+
+# see the first couple rows
+head(eerf)
+
+# See variables and their types
+str(eerf, list.len = ncol(eerf))
+# We have to specify how many vars to show using the list.len arg
+
+# We can also get some basic stats, of course
+mean(eerf$hh_income)
+sd(eerf$hh_income)
+summary(eerf$hh_income)
+
+qplot(eerf$region_id, eerf$hh_income, geom = "jitter")
+#==================================================================================================
+
+#==================================================================================================
+# Set up testing data and training data
+set.seed(3456)
+
+trainIndex <- createDataPartition(y = eerf$parc_2cer, p = 0.8, list = F)
+train_data <- eerf[trainIndex,]
+test_data  <- eerf[-trainIndex,]
+#==================================================================================================
+
+#==================================================================================================
+# Training Model
+system.time(mod_demo_rpart <- train(parc_2cer ~ state_id + hh_size + inc_farm1 + inc_manual1 + 
+                                       inc_domstc1 + lofftrtime + redland, 
+                                     data = train_data,
+                                     metric = "Kappa",
+                                     method = "rpart"))
+fancyRpartPlot(mod_demo_rpart$finalModel)
+
+system.time(mod_rf1 <- train(parc_2cer ~ ., 
+                             data = train_data,
+                             metric = "Kappa",
+                             method = "rf"))
+
+system.time(mod_rf2 <- train(parc_2cer ~ ., 
+                             data = train_data,
+                             trControl = trainControl(method="repeatedcv",number = 10, repeats = 10),
+                             metric = "Kappa",
+                             method = "rf"))
+
+system.time(mod_rf3 <- train(parc_2cer ~ ., 
+                             data = train_data,
+                             trControl = trainControl(method="LOOCV", number = 10),
+                             metric = "Kappa",
+                             method = "rf"))
+#==================================================================================================
+
+#==================================================================================================
+# Predictions and Confusion Matrices
+pred_rpart <- predict(mod_demo_rpart, test_data)
+pred1 <- predict(mod_rf1, test_data)
+pred2 <- predict(mod_rf2, test_data)
+pred3 <- predict(mod_rf3, test_data)
+
+
+#==================================================================================================
+
+
