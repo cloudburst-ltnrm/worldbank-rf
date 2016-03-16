@@ -46,6 +46,8 @@ str(eerf, list.len = ncol(eerf))
 mean(eerf$hh_income)
 sd(eerf$hh_income)
 summary(eerf$hh_income)
+
+qplot(eerf$region_id, eerf$hh_income, geom = "jitter")
 #==================================================================================================
 
 #==================================================================================================
