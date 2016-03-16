@@ -36,16 +36,15 @@ Now that we have R installed, and our packages loaded, we need some data. R can 
 As discussed in the workshop presentation, multiple data processing steps were taken to prepare the data for analysis. This primarily involved plot and household-member level variables into household level variables. For example, rather than record for each field what crop is grown, a binary variable was created for each crop, indicating whether or not the household grows that crop. Other pre-processing included imputing missing data, generally by entering values randomized within one SD of the mean. Lastly, we made sure that all categorical variables are in R's [factor type](http://www.stat.berkeley.edu/~s133/factors.html).
 
 * **Step 8:** Run the line below to download the dataset:
-`bb <-  read.csv("https://raw.githubusercontent.com/cloudburst-ltnrm/worldbank-rf/master/datasets/baseball_salaries.csv")`
+`load(url("https://github.com/cloudburst-ltnrm/worldbank-rf/raw/master/datasets/usaid_data.rdata"))`
 
-The dataset will be stored in a data frame (this is one of the data structures in R) named `bb`. A dataframe is basically a matrix, where columns represent variables, and rows are observations. To see the dimensions of this data type `dim(bb)`. We can see the first couple rows of the `bb` dataframe by typing `head(bb)`. To get a more comprehensive view of the data structure, try `str(bb)`. An individual variable can be accessed using the `$` operator, for example `bb$salary`. With this we can get quickly get some basic statistics: `mean(bb$salary)`, `sd(bb$salary)`, or just `summary(bb$salary)`. To get a basic plot from `ggplot2`, try ` qplot(bb$yearID, bb$salary, geom = "jitter")`. To read more about data exploration in R, see the resources section below.
-
+The dataset will be stored in a data frame (this is one of the data structures in R) named `eerf`. A dataframe is basically a matrix, where columns represent variables, and rows are observations. To see the dimensions of this data type `dim(eerf)`. We can see the first couple rows of the `eerf` dataframe by typing `head(eerf)`. To get a more comprehensive view of the data structure, try `str(eerf)`. An individual variable can be accessed using the `$` operator, for example `eerf$hh_income`. With this we can get quickly get some basic statistics: `mean(eerf$hh_income)`, `sd(eerf$hh_income)`, or just `summary(eerf$hh_income)`. To get a basic plot from `ggplot2`, try `qplot(eerf$region_id, eerf$hh_income, geom = "jitter")`. To read more about data exploration in R, see the resources section below.
 
 ## Random Forests in Practice
 We will go through the basic process of running random forests. In particular, we will be looking for good predictors of conflict. The variable `dispute` is binary for whether or not a respondent had a land related dispute, and `dispute_num` gives the total number of disputes for the respondent. Then the following variables count each kind of dispute for the respondent: `disp_boundary`, `disp_exchange`, `disp_roadacc`, `disp_wateracc`, `disp_rental`, `disp_divorce`, `disp_inhrt`, `disp_claim`, `disp_other`. For the sake of simplicity, we will focus on predicting `dispute`.
 
 ### Feature Building and Selection
-In random forests and machine learning, predicting variables are often referred to as features. In a perfect world, we would train our model on all variables available. However, we only have limited time for this presentation, and these models can take quite a bit of time to train. **Step 9:** Take a couple minutes to browse the codebook [here](), and pick out 5 or so variables that you think might be could be good predictors of conflict.
+In random forests and machine learning, predicting variables are often referred to as features. In a perfect world, we would train our model on all variables available. However, we only have limited time for this presentation, and these models can take quite a bit of time to train. **Step 9:** Take a couple minutes to browse the codebook [here](https://github.com/cloudburst-ltnrm/worldbank-rf/blob/master/datasets/codebook.md), and pick out 5 or so variables that you think might be could be good predictors of conflict.
 
 ### Testing - Setup
 As mentioned in the presentation, we will need to create a testing set and a training set. `caret` has a function for this called [`createDataPartition`](http://www.inside-r.org/node/87010), which uses the outcome variable to split data. **Step 10:** The following commands will split your data into a training set (60%), and a test set (40%).  
@@ -88,7 +87,6 @@ There are many tuning parameters that can be specified with random forests, and 
 
 Further resources...
 http://topepo.github.io/caret/training.html#custom
-
 
 ## About
 ### Authors
