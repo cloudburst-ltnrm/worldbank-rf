@@ -84,40 +84,22 @@ qplot(well_reg, fill=predRight, data=testingv,main="",
 The `caret` package also has a built in function for evaluating the importance of individual variables. **Step 16:** Run `varImp(mod_rf)`, to see the importance, and `ggplot(varImp(mod_rf))`, to plot it. If you'd like to read more about *how* variable is determined, the `caret` documentation is great, [see here](http://topepo.github.io/caret/varimp.html).
 
 ## Resources and Next Steps
-<<<<<<< HEAD
+There are many tuning parameters that can be specified with random forests, and there are several other implementations supported in R, and by `caret`. The resources below are meant to provide you with what you need to take your models to the next step, and gain a deeper understanding of random forests.  
+
 ### Resources for `caret`
 * [`caret` Homepage](http://topepo.github.io/caret/index.html)
 * [Model Training and Parameter Tuning](http://topepo.github.io/caret/training.html#custom)
 * [Random Forests Models in `caret`](http://topepo.github.io/caret/Random_Forest.html)
+* [Feature Selection]( http://machinelearningmastery.com/feature-selection-with-the-caret-r-package/)
 * [Practical Machine Learning on Coursera](https://www.coursera.org/learn/practical-machine-learning)
 ### Machine Learning Resources
 * [The Elements of Statistical Learning: Data Mining, Inference, and Prediction](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
 * [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/)
+* [Stanford Statistical Learning](https://lagunita.stanford.edu/courses/HumanitiesScience/StatLearning/Winter2014/about)
 ### Random Forests Resources
 * [H2O](https://github.com/h2oai/h2o-3)
 * [Yhat - Random Forests in Python](http://blog.yhat.com/posts/random-forests-in-python.html)
 * [Yhat - Random Forest Regression and Classification in R and Python](http://blog.yhat.com/posts/comparing-random-forests-in-python-and-r.html)
-=======
-There are many tuning parameters that can be specified with random forests, and there are several other implementations supported in R, and by `caret`. The resources below are meant to provide you with what you need to take your models to the next step, and gain a deeper understanding of random forests.  
-
-###Reference books
-Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An Introduction to Statistical Learning with Applications in R. Springer: Springer Texts in Statistics (free electronic version available)
-
-Trevor Hastie, Robert Tibshirani and Jerome Friedman. 2009. The Elements of Statistical Learning: Data Mining, Inference, and Prediction. Springer: Springer Series in Statistics. (free electronic version available)
-
-###Online courses 
-Stanford - https://lagunita.stanford.edu/courses/HumanitiesScience/StatLearning/Winter2014/about
-
-Coursera – Johns Hopkins Data Science Specialization, www.coursera.org - ‘Practical Machine Learning’ 
-
-###Blogs 
- http://blog.yhat.com/posts/random-forests-in-python.html 
- 
- http://machinelearningmastery.com/feature-selection-with-the-caret-r-package/
-
-###Technical resources
-http://topepo.github.io/caret/training.html#custom
->>>>>>> cf9f7e2871a14815c881012b2f5c233bae74aaad
 
 ## About
 ### Authors
