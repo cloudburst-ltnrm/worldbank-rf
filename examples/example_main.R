@@ -12,11 +12,11 @@
 # Clear Environments
 rm(list=ls())
 
-# Set Working Directory
-setwd("")
-
 # Import data
 load(url("https://github.com/cloudburst-ltnrm/worldbank-rf/raw/master/datasets/usaid_data.rdata"))
+
+# Install Packages
+install.packages(c("plyr", "caret", "randomForest", "ggplot2", "ggthemes"))
 
 # Libraries
 # Plyr has a number of useful functions
@@ -34,40 +34,38 @@ library(randomForest)
 # R Basics
 
 # See the dimensions
-dim(eerf)
+dim(data)
 
 # see the first couple rows
-head(eerf)
+head(data)
 
 # See variables and their types
-str(eerf, list.len = ncol(eerf))
+str(data, list.len = ncol(data))
 # We have to specify how many vars to show using the list.len arg
 
 # We can also get some basic stats, of course
-mean(eerf$hh_income)
-sd(eerf$hh_income)
-summary(eerf$hh_income)
+mean(data$hh_income)
+sd(data$hh_income)
+summary(data$hh_income)
 #==================================================================================================
 
 #==================================================================================================
 # Set up testing data and training data
 set.seed(3456)
 
-trainIndex <- createDataPartition(y = eerf$parc_2cer, p = 0.8, list = F)
-train_data <- eerf[trainIndex,]
-test_data  <- eerf[-trainIndex,]
+trainIndex <- createDataPartition(y = data$well_reg, p = 0.6, list = F)
+train_data <- data[trainIndex,]
+test_data  <- data[-trainIndex,]
 #==================================================================================================
 
 #==================================================================================================
 # Training Model
 # Basic - Use whichever variables you'd like to test here
-mod_rf <- train(parc_2cer ~ state_id + hh_size + hh_num_male + hh_num_female +
-                 hh_head_age + hh_avg_age + hh_ed_avg_yrs + inc_farm1 + inc_manual1 + 
-                 inc_domstc1 + lofftrtime + redland, 
+mod_rf <- train(well_reg ~ ., 
                 data = train_data,
                 trControl = trainControl(method="cv",number=5),
                 metric = "Kappa",
-                method = "rf")
+                method = "randomForest")
 #==================================================================================================
 
 #==================================================================================================
@@ -76,25 +74,22 @@ mod_rf <- train(parc_2cer ~ state_id + hh_size + hh_num_male + hh_num_female +
 mod_rf
 # Or to see some info about the final model, and particularly the confusion matrix
 mod_rf$finalModel
-#==================================================================================================
 
-#==================================================================================================
-# Evaluating our Model on Our Predictions
-pred <- predict(mod_rf, test_data)
-
-confusionMatrix(pred, test_data$parc_2cer)
-
-test_data$predRight <- pred==test_data$parc_2cer
-qplot(parc_2cer, fill=predRight, data=test_data, main="", 
-      xlab = "Second Level Certification") + theme_fivethirtyeight()
-#==================================================================================================
-
-#==================================================================================================
 # Variable Importance
 varImp(mod_rf)
-
 # and
-ggplot(varImp(mod_rf)) + theme_fivethirtyeight()
+ggplot(varImp(mod_rf))# + theme_fivethirtyeight()
 # or
-plot(varImp(mod_rf))
+# plot(varImp(mod_rf))
+#==================================================================================================
+
+#==================================================================================================
+# Evaluating our Model on Our Test data
+pred <- predict(mod_rf, test_data)
+
+confusionMatrix(pred, test_data$well_reg)
+
+test_data$predRight <- pred==test_data$well_reg
+qplot(well_reg, fill=predRight, data=test_data, main="", 
+      xlab = "Second Level Certification")# + theme_fivethirtyeight()
 #==================================================================================================

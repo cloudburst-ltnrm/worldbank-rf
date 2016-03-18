@@ -31,7 +31,7 @@ x1
 To access the documentation for any function in a package simply type `?function_name` in the console. If the exact function name is not known, you can search all available documentation by typing `??function_name`.
 
 ### Data
-Now that we have R installed, and our packages loaded, we need some data. R can load data directly from the internet. Let's download a dataset in this repo. Please run the line below to download a dataset from a land certification impact evaluation in Ethiopia. This is a household level dataset containing a variety of land related indicators including land investment, conflict, governance, land registration, etc. The dataset also contains variables describing household size, income, migration, etc.
+Now that we have R installed, and our packages loaded, we need some data. R can load data directly from the internet. Let's download a dataset in this repo. Please run the line below to download a dataset from an impact evaluation in Africa. This is a household level dataset containing a variety of land related indicators including land investment, conflict, governance, land registration, etc. The dataset also contains variables describing household size, income, migration, etc.
 
 As discussed in the workshop presentation, multiple data processing steps were taken to prepare the data for analysis. This primarily involved plot and household-member level variables into household level variables. For example, rather than record for each field what crop is grown, a binary variable was created for each crop, indicating whether or not the household grows that crop. Other pre-processing included imputing missing data, generally by entering values randomized within one SD of the mean. Lastly, we made sure that all categorical variables are in R's [factor type](http://www.stat.berkeley.edu/~s133/factors.html).
 
@@ -41,30 +41,32 @@ As discussed in the workshop presentation, multiple data processing steps were t
 The dataset will be stored in a data frame (this is one of the data structures in R) named `eerf`. A dataframe is basically a matrix, where columns represent variables, and rows are observations. To see the dimensions of this data type `dim(eerf)`. We can see the first couple rows of the `eerf` dataframe by typing `head(eerf)`. To get a more comprehensive view of the data structure, try `str(eerf)`. An individual variable can be accessed using the `$` operator, for example `eerf$hh_income`. With this we can get quickly get some basic statistics: `mean(eerf$hh_income)`, `sd(eerf$hh_income)`, or just `summary(eerf$hh_income)`. To get a basic plot from `ggplot2`, try `qplot(eerf$region_id, eerf$hh_income, geom = "jitter")`. To read more about data exploration in R, see the resources section below.
 
 ## Random Forests in Practice
-We will go through the basic process of running random forests. In particular, we will be looking for good predictors of conflict. The variable `dispute` is binary for whether or not a respondent had a land related dispute, and `dispute_num` gives the total number of disputes for the respondent. Then the following variables count each kind of dispute for the respondent: `disp_boundary`, `disp_exchange`, `disp_roadacc`, `disp_wateracc`, `disp_rental`, `disp_divorce`, `disp_inhrt`, `disp_claim`, `disp_other`. For the sake of simplicity, we will focus on predicting `dispute`.
+We will go through the basic process of running random forests. Take a few minutes to browse the codebook [here](https://github.com/cloudburst-ltnrm/worldbank-rf/blob/master/datasets/codebook.md),  and choose an outcome variable that seems interesting. It can be continuous, or categorical. A couple suggestions are: Whether or not a respondent experienced a conflict in the past 2 years `dispue`, does the respondent think that land laws protect women `llawpw`, or whether or not someone in the household migrated permanently during the last 2 years `perm_migrat`. Alternatively, you can create your own variable of interest from the variables available. For example, using principal component analysis on the household assets variables.  
+
+We will continue this example by trying to predict drinking well registration, `well_reg`.  
 
 ### Feature Building and Selection
-In random forests and machine learning, predicting variables are often referred to as features. In a perfect world, we would train our model on all variables available. However, we only have limited time for this presentation, and these models can take quite a bit of time to train. **Step 9:** Take a couple minutes to browse the codebook [here](https://github.com/cloudburst-ltnrm/worldbank-rf/blob/master/datasets/codebook.md), and pick out 5 or so variables that you think might be could be good predictors of conflict.
+In random forests and machine learning, predicting variables are often referred to as features. In a perfect world, we would train our model on all variables available. However, we only have limited time for this presentation, and these models can take quite a bit of time to train. **Step 9:** Take a couple minutes to browse the codebook [here](https://github.com/cloudburst-ltnrm/worldbank-rf/blob/master/datasets/codebook.md), and pick out 5 or so variables that you think might be could be good predictors of your chosen outcome variable.
 
 ### Testing - Setup
-As mentioned in the presentation, we will need to create a testing set and a training set. `caret` has a function for this called [`createDataPartition`](http://www.inside-r.org/node/87010), which uses the outcome variable to split data. **Step 10:** The following commands will split your data into a training set (60%), and a test set (40%).  
+As mentioned in the presentation, we will need to create a testing set and a training set. `caret` has a function for this called [`createDataPartition`](http://www.inside-r.org/node/87010), which uses the outcome variable to split data. **Step 10:** The following commands will split your data into a training set (60%), and a test set (40%).  Note that the data will be split within levels of the `y` argument, to try and get an even distribution of all levels in the testing and training data.   
 ```
-trainIndex <- createDataPartition(y = eerf$dispute, p = 0.8, list = F)
+trainIndex <- createDataPartition(y = eerf$well_reg, p = 0.6, list = F)
 train_data <- eerf[trainIndex,]
 test_data  <- eerf[-trainIndex,]
 ```
 Note, we are only using 60% of the data to train due to time constraints. The general recommendation is to use 60-80% for training, and the remainder for testing. In the case where
 ### Building a Model With `caret`
-Once the dataset is split, building a model with random forests in R is a fairly straightforward process. A model can be built as follows. **Step 11:** Train a basic model using the variables you decided on previously.
+Once the dataset is split, building a model with random forests in R is a fairly straightforward process. A model can be built as follows. **Step 11:** Train a basic model using the variables you decided on previously.  
 ```
-mod_rf <- train(parc_2cer_num ~ your_var_1 + your_var_2 + your_var_3 +
+mod_rf <- train(well_reg ~ your_var_1 + your_var_2 + your_var_3 +
                 your_var_4 + your_var_5,
                 data = train_data,
                 trControl = trainControl(method="cv",number=5),
                 method = "rf")
 ```
 Where the `trControl` argument specifies that we should use cross validation (cv) resampling. To read about available resampling methods, and other training/tuning parameters, [see here](http://topepo.github.io/caret/training.html#custom).
-Note that if you'd like to use *all* variables in a dataframe, replace the list of variables with a period, e.g. `dispute ~ .`, but be prepared to give up your laptop for a while.  
+Note that if you'd like to use *all* variables in a dataframe, replace the list of variables with a period, e.g. `dispute ~ .`, but be prepared to give up your laptop for a while.  Alternatively, you can try a faster implementation of random forests, see the resources section below.
 
 ### Taking a Look at the Results
 **Step 12:** We can look at an overview of the training process by just typing `mod_rf`. In particular we can see the accuracy and kappa metrics for various `mtry` levels, where `mtry` is the number of predictors sampled at each split. There are also details about the number of samples and predictors, number of outcome variable classes, and resampling method used.  
@@ -72,21 +74,29 @@ Note that if you'd like to use *all* variables in a dataframe, replace the list 
 **Step 13:** To see details more specific to the final model used, type `mod_rf$finalModel`. We can see many of the same details, as well as the number of trees (which is parameter we can set if desired), the estimated error rate, and a [confusion matrix](http://www.dataschool.io/simple-guide-to-confusion-matrix-terminology/).
 
 ### Making and Evaluating Predictions
-**Step 14:** Now to put the `testing` dataset to use, enter `pred <- predict(mod_rf, testing)`, to make predictions on your dataset. **Step 15:** To generate a confusion matrix and evaluate the predictions, caret provides a great function: `confusionMatrix(pred, testing$parc_2cer_num)`. To plot a bar graph of your results, run the following:
+**Step 14:** Now to put the `testing` dataset to use, enter `pred <- predict(mod_rf, testing)`, to make predictions on your dataset. **Step 15:** To generate a confusion matrix and evaluate the predictions, caret provides a great function: `confusionMatrix(pred, testing$well_reg)`. To plot a bar graph of your results, run the following:
 ```
-testing$predRight <- pred==testing$parc_2cer_num
-qplot(parc_2cer_num, fill=predRight, data=testingv,main="",
-      xlab = "Second Level Certification")
+testing$predRight <- pred==testing$well_reg
+qplot(well_reg, fill=predRight, data=testingv,main="",
+      xlab = "Land Certification")
 ```
 
 ### Variable Importance
 The `caret` package also has a built in function for evaluating the importance of individual variables. **Step 16:** Run `varImp(mod_rf)`, to see the importance, and `ggplot(varImp(mod_rf))`, to plot it. If you'd like to read more about *how* variable is determined, the `caret` documentation is great, [see here](http://topepo.github.io/caret/varimp.html).
 
 ## Resources and Next Steps
-There are many tuning parameters that can be specified with random forests, and there are several other implementations supported in R, and by `caret`. The resources below are meant to provide you with what you need to take your models to the next step, and gain a deeper understanding of random forests.  
-
-Further resources...
-http://topepo.github.io/caret/training.html#custom
+### Resources for `caret`
+* [`caret` Homepage](http://topepo.github.io/caret/index.html)
+* [Model Training and Parameter Tuning](http://topepo.github.io/caret/training.html#custom)
+* [Random Forests Models in `caret`](http://topepo.github.io/caret/Random_Forest.html)
+* [Practical Machine Learning on Coursera](https://www.coursera.org/learn/practical-machine-learning)
+### Machine Learning Resources
+* [The Elements of Statistical Learning: Data Mining, Inference, and Prediction](http://statweb.stanford.edu/~tibs/ElemStatLearn/)
+* [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/)
+### Random Forests Resources
+* [H2O](https://github.com/h2oai/h2o-3)
+* [Yhat - Random Forests in Python](http://blog.yhat.com/posts/random-forests-in-python.html)
+* [Yhat - Random Forest Regression and Classification in R and Python](http://blog.yhat.com/posts/comparing-random-forests-in-python-and-r.html)
 
 ## About
 ### Authors
