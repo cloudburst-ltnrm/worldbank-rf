@@ -16,7 +16,7 @@ rm(list=ls())
 load(url("https://github.com/cloudburst-ltnrm/worldbank-rf/raw/master/datasets/usaid_data.rdata"))
 
 # Install Packages
-install.packages(c("plyr", "caret", "randomForest", "ggplot2", "ggthemes"))
+# install.packages(c("plyr", "caret", "randomForest", "ggplot2", "ggthemes"))
 
 # Libraries
 # Plyr has a number of useful functions
@@ -61,7 +61,9 @@ test_data  <- data[-trainIndex,]
 #==================================================================================================
 # Training Model
 # Basic - Use whichever variables you'd like to test here
-mod_rf <- train(well_reg ~ ., 
+mod_rf <- train(well_reg ~ state_id + hh_size + hh_num_male + hh_num_female +
+                  hh_head_age + hh_avg_age + hh_ed_avg_yrs + inc_farm1 + inc_manual1 + 
+                  inc_domstc1 + lofftrtime + redland, 
                 data = train_data,
                 trControl = trainControl(method="cv",number=5),
                 metric = "Kappa",
