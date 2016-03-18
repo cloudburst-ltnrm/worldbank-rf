@@ -1,5 +1,4 @@
 # Applications of Random Forests in Land Tenure Research
-Descriptive paragraph.
 
 ## Setup
 ### Software
@@ -85,14 +84,29 @@ The `caret` package also has a built in function for evaluating the importance o
 ## Resources and Next Steps
 There are many tuning parameters that can be specified with random forests, and there are several other implementations supported in R, and by `caret`. The resources below are meant to provide you with what you need to take your models to the next step, and gain a deeper understanding of random forests.  
 
-Further resources...
+###Reference books
+Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani. 2013. An Introduction to Statistical Learning with Applications in R. Springer: Springer Texts in Statistics (free electronic version available)
+
+Trevor Hastie, Robert Tibshirani and Jerome Friedman. 2009. The Elements of Statistical Learning: Data Mining, Inference, and Prediction. Springer: Springer Series in Statistics. (free electronic version available)
+
+###Online courses 
+Stanford - https://lagunita.stanford.edu/courses/HumanitiesScience/StatLearning/Winter2014/about
+
+Coursera – Johns Hopkins Data Science Specialization, www.coursera.org - ‘Practical Machine Learning’ 
+
+###Blogs 
+ http://blog.yhat.com/posts/random-forests-in-python.html 
+ 
+ http://machinelearningmastery.com/feature-selection-with-the-caret-r-package/
+
+###Technical resources
 http://topepo.github.io/caret/training.html#custom
 
 ## About
 ### Authors
 * **Heather Huntington** - Impact Evaluation Specialist, Land Tenure and Natural Resources - The Cloudburst Group
-* **Mercedes Stickler** - Sr. Land Tenure Specialist, E3/Land Office, USAID
 * **Ben Ewing** - Research Analyst - The Cloudburst Group
+* **Mercedes Stickler** - Sr. Land Tenure Specialist, USAID
 
 ### Affiliations
 * **[USAID](https://www.usaid.gov/)**
